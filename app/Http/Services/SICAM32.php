@@ -44,6 +44,17 @@ class SICAM32 {
     return $resultado->DATOS;
   }
 
+  public static function codigoTIpoIdentificon($idBuscar)
+    {
+        $lista = self::listadoTiposIdentificacion();
+
+        foreach ($lista as $item) {
+            if ($item->tipoIdentificacionID == $idBuscar) {
+                return $item->tipoIdentificacionCODIGO;
+            }
+        }
+    }
+
   public static function buscarRegistroMercantil($criterio, $valor) 
   {
     $resultado = self::ejecutarOperacion('buscarRegistroMercantil', [

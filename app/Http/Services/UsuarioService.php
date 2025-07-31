@@ -8,28 +8,17 @@ use Illuminate\Support\Facades\Auth;
 class UsuarioService
 {
 
-    public static function crearUsuario($persona): User
-    {
-        return self::crearUsuario2(
-            $persona->personaIDENTIFICACION, 
-            $persona->personaNOMBRES,
-            $persona->personaAPELLIDOS, 
-            $persona->correoPRINCIPAL->correoDIRECCION,
-            $persona->personaIDENTIFICACION);
-    }
-
-    public static function crearUsuario2($personaIDENTIFICACION, $personaNOMBRES, 
-        $personaAPELLIDOS, $correoDIRECCION, $password): User
+    public static function crearUsuario($request): User
     {
         if(Auth::check())
             return Auth::user();
         
         $user = new User();
-        $user->identification = $personaIDENTIFICACION;
-        $user->name = $personaNOMBRES;
-        $user->lastname = $personaAPELLIDOS;
-        $user->email = $correoDIRECCION;
-        $user->password = bcrypt($password);
+        $user->identification = $request->user_identification;
+        $user->name = $request->user_name;
+        $user->lastname = $request->user_lastname;
+        $user->email = $request->user_email;
+        $user->password = bcrypt($request->user_password);
         $user->save();
 
         return $user;

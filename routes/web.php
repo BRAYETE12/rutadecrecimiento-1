@@ -26,8 +26,8 @@ Route::get('/mapa-sitio', [InicioController::class, 'mapa'])->name('site.map');
 /* Rutas de registro */
 Route::get('/registro', [RegistroController::class, 'index'])->name('register');
 Route::post('/registro/buscar', [RegistroController::class, 'search'])->name('register.search');
-Route::post('/registro/actualizar', [RegistroController::class, 'store'])->name('register.save');
-Route::post('/registro/lead', [RegistroController::class, 'storeLead'])->name('register.lead');
+Route::post('/registro/buscarUsuario', [RegistroController::class, 'searchUsuario'])->name('register.searchUsuario');
+Route::post('/registro/store', [RegistroController::class, 'store'])->name('register.save');
 
 /* Rutas de empresa */
 Route::get('/ingreso', [LoginController::class, 'index'])->name('login');
@@ -37,6 +37,10 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('company.logout'
 Route::get('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic');
 Route::post('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic.saveVenta');
 Route::post('/empresa/diagnostico/procesar', [DiagnosticoController::class, 'store'])->name('company.diagnostic.save');
+
+Route::get('/municipios/listado', [InicioController::class, 'getMunicipios'])->name('company.getMunicipios');
+Route::get('/secciones/listado', [InicioController::class, 'getSecciones'])->name('company.getSecciones');
+Route::get('/actividades/listado', [InicioController::class, 'getActividades'])->name('company.getActividades');
 
 Route::group(['middleware' => ['auth']], function() {
 
@@ -64,9 +68,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/empresa/aplicacion/procesar', [ProgramaController::class, 'applicationSave'])->name('company.application.save');
     Route::get('/exportarPreguntasInscripcionConvocatoria/{id}', [ProgramaController::class, 'exportarPreguntasInscripcionConvocatoria']);
 
-    Route::get('/municipios/listado', [InicioController::class, 'getMunicipios'])->name('company.getMunicipios');
-    Route::get('/secciones/listado', [InicioController::class, 'getSecciones'])->name('company.getSecciones');
-    Route::get('/actividades/listado', [InicioController::class, 'getActividades'])->name('company.getActividades');
 });
 
 
