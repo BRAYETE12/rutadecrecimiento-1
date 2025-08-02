@@ -1,4 +1,4 @@
-<section class="hidden" id="resumen">
+<section class="w-100 hidden" id="resumen">
     <form class="row mt-4" id="resumenForm" >
 
         <div class="col-12 mb-3" id="tipoRegistroResumen" ></div>
@@ -83,8 +83,13 @@
     $(document).ready(function () {
 
         $('#resumenBtn').on('click', function () {
-            
+
+            if (!$('input[name="terms"]').is(':checked')) {
+                return mostrarAlerta("Debes aceptar los términos y condiciones.");
+            }
+
             $('#screenLoader').removeClass('d-none');
+            $('#errorMessage').addClass('d-none').text('');
 
             let tipoRegistroRUTAC = $('input[name="tipoRegistroRUTAC"]:checked').val();
 
@@ -101,13 +106,14 @@
             }
 
             const allData = [...dataUsuario, ...dataContacto, ...dataUnidad];
-            const data = { tipo_registro_rutac: tipoRegistroRUTAC };
-            allData.forEach(item => data[item.name] = item.value);
+            const data = Object.fromEntries(allData.map(item => [item.name, item.value]));
+            data.tipo_registro_rutac = tipoRegistroRUTAC;
+            data._token = '{{ csrf_token() }}';
 
             $.ajax({
                 url: '/registro/store',
                 method: 'POST',
-                data: { ...data,  _token: '{{ csrf_token() }}' },
+                data: data,
                 success: function (response) {
 
                 },

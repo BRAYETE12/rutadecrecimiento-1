@@ -1,4 +1,4 @@
-<div class="hidden" id="usuario" > 
+<div class="w-100 hidden" id="usuario" > 
     <form class="row" id="usuarioform" >
 
         <div class="col-12 col-md-12 mb-4">
@@ -87,7 +87,7 @@
         });
         
         $('#togglePassword').on('click', function () {
-            const passwordInput = $('#password');
+            const passwordInput = $('#user_password');
             const icon = $('#iconPassword');
 
             const isPassword = passwordInput.attr('type') === 'password';

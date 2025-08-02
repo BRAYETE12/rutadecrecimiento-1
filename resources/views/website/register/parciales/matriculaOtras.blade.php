@@ -1,4 +1,4 @@
-<section class="hidden" id="matriculaOtras">
+<section class="w-100 hidden" id="matriculaOtras">
     <h2 class="color-2 font-w-700" tabindex="12">Estás comenzando tu ruta de crecimiento</h2>
    
     <div id="banner_info_idea">                    
@@ -24,10 +24,10 @@
             <h4>Datos de su <span class="tituloSegunTipo">...........</span></h4>
         </div>
 
-        <div class="col-12 col-md-12 form-group mt-3">
+        <div class="col-12 col-md-12 form-group mb-3">
             <div class="form-group">
                 <label class="form-label">Tipo de Organización *</label>
-                <select class="form-control" id="tipoPersonaID" name="tipoPersonaID" required>
+                <select class="form-select" id="tipoPersonaID" name="tipoPersonaID" required>
                     <option value="0" selected="" class="selecPersonaNatural">PERSONA NATURAL</option>
                     <!--<option value="1">Establecimentos</option>-->
                     <option value="2" class="selecPersonaJuridica">PERSONA JURÍDICA O EMPRESA</option>
@@ -57,8 +57,8 @@
 
         <div class="col-12 col-md-12 form-group mb-3 camara_comercio">
             <label class="form-label">Seleccione la Cámara de Comercio a la que pertenece *</label>
-            <select class="form-control" name="camara_comercio" required>
-                <option value="0">SELECCIONE UNA</option>
+            <select class="form-select" name="camara_comercio" required>
+                <option value="0">Seleccione una opción</option>
                 @foreach ($camaras as $camara)
                     <option value="{{ $camara->camaraCODIGO }}">{{ $camara->camaraNOMBRE }}</option>
                 @endforeach
@@ -82,8 +82,8 @@
 
         <div class="col-12 col-md-6 form-group mb-3">
             <label class="form-label" >Seleccione un departamento *</label>
-            <select class="form-control" id="department" name="department" required>
-                <option value="0">SELECCIONE UNA OPCIÓN</option>
+            <select class="form-select" id="department" name="department" required>
+                <option value="0">Seleccione una opción</option>
                 @foreach ($departamentos as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                 @endforeach
@@ -91,12 +91,8 @@
         </div>
         <div class="col-12 col-md-6 form-group mb-3">
             <label class="form-label" >Seleccione un municipio *</label>
-            <select class="form-control" id="municipality" name="municipality" required>
-                <option data-depto="0">SELECCIONE UNA OPCIÓN</option>
-                @foreach ($municipios as $item)
-                    <option value="{{ $item->id }}" data-depto="{{ $item->departamentoID }}"
-                        style="display: none;">{{ $item->name }}</option>
-                @endforeach
+            <select class="form-select" id="municipality" name="municipality" required>
+                <option data-depto="0">Seleccione un departamento</option>
             </select>
         </div>
 
@@ -124,8 +120,8 @@
 
         <div class="col-12 col-md-6 form-group mb-3">
             <label class="form-label" >Sector *</label>
-            <select class="form-control" id="sector" name="sector_id" required>
-                <option value="">Seleccione un sector *</option> 
+            <select class="form-select" id="sector" name="sector_id" required>
+                <option>Seleccione una opción</option> 
                 @foreach($sectores as $item)
                     <option  value="{{$item->sector_id}}">{{$item->sectorNOMBRE}}</option>
                 @endforeach
@@ -134,14 +130,14 @@
 
         <div class="col-12 col-md-6 form-group mb-3">
             <label class="form-label" >Sección </label>
-            <select class="form-control" id="seccion" name="seccion">
+            <select class="form-select" id="seccion" name="seccion">
                 <option>Seleccione un sector</option>
             </select>
         </div>
 
         <div class="col-12 col-md-12 form-group mb-3">
             <label class="form-label" >Actividad economica </label>
-            <select class="form-control" id="actividad" name="ciiuactividad_id">
+            <select class="form-select" id="actividad" name="ciiuactividad_id">
                 <option>Seleccione una sección</option>
             </select>
         </div>
@@ -196,12 +192,6 @@
             $("#tipoRegistro").slideDown();
         });
 
-        $('#department').on('change', function() {
-            var deptoID = $(this).val();
-            $("#municipality option").hide();
-            $("#municipality option[data-depto=" + deptoID + "]").show();
-        });
-
 
         function initselect(url, id, selector, idInit = null)
         {
@@ -227,6 +217,11 @@
             }
         }
 
+        $('#department').on('change', function() {
+            let id = $(this).val();
+            initselect('/municipios/listado', id, '#municipality');
+        });
+
         $('#sector').on('change', function () {
             // Limpiar los selects de sección y actividad
             $('#seccion').html('<option value="">Seleccione un sector</option>');
@@ -243,7 +238,6 @@
             let id = $(this).val();
             initselect('/actividades/listado', id, '#actividad');
         });
-
 
     });
 </script>

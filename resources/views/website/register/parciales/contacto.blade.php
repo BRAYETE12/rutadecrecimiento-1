@@ -1,4 +1,4 @@
-<section class="hidden" id="contacto">
+<section class="w-100 hidden" id="contacto">
     <h2 class="color-2 font-w-700">
         Datos de la Persona de Contacto
     </h2>
@@ -12,8 +12,8 @@
 
         <div class="col-12 col-md-6 mb-3">
             <label class="form-label">Cargo *</label>
-            <select class="form-control" id="contact_position" name="contact_position" required>
-                <option value="">SELECCIONE UNO</option> 
+            <select class="form-select" id="contact_position" name="contact_position" required>
+                <option value="">Seleccione una opción</option> 
                 @foreach($listaCargos as $cargo)
                     <option value="{{$cargo->vinculoCargoTITULO}}">{{$cargo->vinculoCargoTITULO}}</option>
                 @endforeach
@@ -22,8 +22,8 @@
 
         <div class="col-12 col-md-6 form-group mb-3">
             <label class="form-label">Sexo *</label>
-            <select class="form-control" name="contact_sexo" id="contact_sexo" required>
-                <option value="">SELECCIONE UNO</option>
+            <select class="form-select" name="contact_sexo" id="contact_sexo" required>
+                <option value="">Seleccione una opción</option>
                 <option value="MASCULINO" >MASCULINO</option>
                 <option value="FEMENINO" >FEMENINO</option>
             </select>
@@ -70,11 +70,15 @@
                 let nit = $("#nit_registrado").val(); 
                 let fecha = $("#registration_date").val();
 
-                $('#infoResumen').html(`
-                    Nombre: <b>${nombre}</b><br>
-                    NIT: <b>${nit}</b><br>
-                    Fecha inicio: <b>${fecha}</b>
-                `);
+                let resumen = `Nombre: <b>${nombre}</b><br>`;
+    
+                if (nit && nit.trim() !== "") {
+                    resumen += `NIT: <b>${nit}</b><br>`;
+                }
+
+                resumen += `Fecha inicio: <b>${fecha}</b>`;
+
+                $('#infoResumen').html(resumen);
             }
 
             let selectedHTML = $('input[name="tipoRegistroRUTAC"]:checked')

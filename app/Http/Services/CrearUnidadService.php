@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Models\CiiuActividad;
 use App\Models\Municipio;
 use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
@@ -12,6 +13,8 @@ class CrearUnidadService
     public static function crearDesdeAPI($values, $request, $userId): UnidadProductiva
     {
         $comercial_activity = substr($values->ciiu1, 1);
+        $activity = CiiuActividad::where('ciiuActividadCODIGO', $comercial_activity)->first();
+        
         $company = new UnidadProductiva();
 
         $company->fill([
@@ -27,6 +30,9 @@ class CrearUnidadService
             'user_id' => $userId,
             'tamano_id' => $values->tamanoempresa,
             'camara_comercio' => 32,
+
+            'sector_id' => $activity->macroSectorID, 
+            'ciiuactividad_id' => $activity->ciiuactividad_id, 
         ]);
 
         $tipoRegistro = UnidadProductivaTipo::where('unidadtipo_id', 4)->first();

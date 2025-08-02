@@ -19,7 +19,7 @@
         <div class="row d-flex justify-content-center">
 
             <!-- Alerta de error -->
-            <div class="col-12 mb-3">
+            <div class="col-12 col-md-10 mb-3">
                 <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
             </div>
 

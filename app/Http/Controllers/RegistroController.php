@@ -8,6 +8,7 @@ use App\Http\Services\reCAPTCHAv3;
 use App\Http\Services\SICAM32;
 use App\Http\Services\UnidadProductivaService;
 use App\Http\Services\UsuarioService;
+use App\Models\CiiuActividad;
 use App\Models\Sector;
 use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
@@ -23,17 +24,14 @@ class RegistroController extends Controller
     private const MENSAJE_NO_ENCONTRO_UNIDAD = "No se encontraron empresas según el tipo de búsqueda. Valide los datos e intente nuevamente.";
     private const MENSAJE_NO_VALIDADA = "No pudimos validar su empresa. Intente nuevamente.";
 
-
     public function index()
     {
         $data = [
-            'section' => CommonService::section(),
             'footer' => CommonService::footer(),
             'links' => CommonService::links(),
             'camaras' => SICAM32::listadoCamarasComercio(),
             'tiposIdentificacion' => SICAM32::listadoTiposIdentificacion(),
             'departamentos' => CommonService::departamentos(),
-            'municipios' => CommonService::municipios(),
             'listaCargos'=> SICAM32::listadoViculosCargos(),
             'sectores'=> Sector::get(),
         ];
@@ -56,7 +54,7 @@ class RegistroController extends Controller
         if ($this->existeNitUnidad($resultado->nit) || $this->existeNombreUnidad($resultado->nombre)) {
             return [ 'success'=> false, 'mensaje'=> self::MENSAJE_EXISTE_UNIDAD ];
         }
-
+        
         return [
             'success'=> true,
             'nombre'=> $resultado->nombre,
@@ -65,6 +63,7 @@ class RegistroController extends Controller
         ];
     }
 
+    // Buscar usuario
     public function searchUsuario(Request $request)
     {
         $exists = User::where('email', $request->email)->exists();
@@ -75,7 +74,7 @@ class RegistroController extends Controller
         ];
     }
 
-
+    // Guardar registro
     public function store(Request $request)
     {
         /*

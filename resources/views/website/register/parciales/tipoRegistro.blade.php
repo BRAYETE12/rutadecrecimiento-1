@@ -1,4 +1,4 @@
-<section class="hidden" id="tipoRegistro" >
+<section class="w-100 hidden" id="tipoRegistro" >
     <h2 class="color-2 font-w-700 mt-4">Actualmente...</h2>
 
     <h2 class="color-3 font-w-900 mb-3 mt-4">... soy una empresa o persona registrada en una cámara de comercio:</h2>
@@ -8,7 +8,7 @@
             <div class="col_ col-xs-12 col-sm-12 col-md-6 mb-4">
 
                 <ul class="question-1 opcion_registro opcion_registrado_ccsm m-0 p-0 ">
-                    <li tabindex="10" class=" ">
+                    <li>
                         <div class="animated-border-box-glow_encendido"></div>
                         <label class="radio animated-border-box_encendido" style="">
                             <input type="radio" name="tipoRegistroRUTAC" value="4" />
@@ -31,7 +31,7 @@
 
             <div class="col_  col-xs-12 col-sm-12 col-md-6 mb-4">
                 <ul class="question-1 opcion_registro opcion_registrado_fuera  m-0 p-0 ">
-                    <li tabindex="10" style="" class="">
+                    <li>
                         <div class="animated-border-box-glow_encendido"></div>
                         <label class="radio  animated-border-box_encendido" style="   border-radius: 10px;">
                             <input type="radio" name="tipoRegistroRUTAC" value="3" />
@@ -61,7 +61,7 @@
             <div class="col_ col-xs-12 col-sm-12 col-md-6 mb-4">
 
                 <ul class="question-1 opcion_registro m-0 p-0 ">
-                    <li tabindex="8">
+                    <li>
                         <div class="animated-border-box-glow_encendido"></div>
                         <label class="radio animated-border-box_encendido">
                             <input type="radio" name="tipoRegistroRUTAC" value="1" />
@@ -81,7 +81,7 @@
             <div class="col_ col-xs-12 col-sm-12 col-md-6 mb-4">
 
                 <ul class="question-1 opcion_registro   m-0 p-0 ">
-                    <li tabindex="9">
+                    <li>
                         <div class="animated-border-box-glow_encendido"></div>
                         <label class="radio animated-border-box_encendido">
                             <input type="radio" name="tipoRegistroRUTAC" value="2" />
@@ -157,14 +157,11 @@
         }
 
         function abrirFormularioMatriculaCCSM() {
-            $("#matriculaCCSM").show();
+            $("#matriculaCCSM").slideDown();
         }
-            
 
-        function abrirFormularioMatriculaOTRACAM() {
-            $(".tituloSegunTipo").html("Empresa");
-            $("#matriculaOtras").slideDown();
-
+        function abrirFormularioMatriculaOTRACAM() 
+        {
             $(".camara_comercio").show();
             $(".registration_number").show();
             $(".nit_registrado").show();
@@ -174,18 +171,23 @@
             $("#registration_number").attr("required", "required");
             $("#nit_registrado").attr("required", "required");
             $("#name_legal_representative").attr("required", "required");
+
+            $(".tituloSegunTipo").html("Empresa");
+            $("#matriculaOtras").slideDown();
         }
 
 
-        function abrirFormularioInformal() {
+        function abrirFormularioInformal() 
+        {
             $(".tituloSegunTipo").html("Idea de Negocio");
             $("#matriculaOtras").slideDown();
         }
 
-        function abrirFormularioIdea() {
-            $(".tituloSegunTipo").html("Idea de Negocio");
-            $("#matriculaOtras").slideDown();
+        function abrirFormularioIdea() 
+        {
             $("#banner_info_idea").show();
+            $(".tituloSegunTipo").html("Idea de Negocio");
+            $("#matriculaOtras").slideDown();
         }
 
 
