@@ -49,8 +49,7 @@
 <script>
     $(document).ready(function () {
 
-        $('#contactoform').on('submit', function (e) {
-            
+        $('#contactoform').on('submit', function (e) {            
             e.preventDefault();
 
             resumen();
@@ -63,9 +62,12 @@
 
             if(tipoRegistroRUTAC === '4')
             {
-                $("#infoResumen").html($("#busquedaResultado").html());
+                let unidadHTML = $('input[name="unidadSeleccionada"]:checked').closest('label').prop('outerHTML');
+
+                $("#infoResumen").html(unidadHTML);
             }
-            else{
+            else
+            {
                 let nombre = $("#business_name").val();
                 let nit = $("#nit_registrado").val(); 
                 let fecha = $("#registration_date").val();
@@ -81,9 +83,8 @@
                 $('#infoResumen').html(resumen);
             }
 
-            let selectedHTML = $('input[name="tipoRegistroRUTAC"]:checked')
-                .closest('ul.question-1').prop('outerHTML');
-            $("#tipoRegistroResumen").html(selectedHTML);
+            let typeHTML = $('input[name="tipoRegistroRUTAC"]:checked').closest('ul.question-1').prop('outerHTML');
+            $("#tipoRegistroResumen").html(typeHTML);
 
 
             let user_identification = $("#user_identification").val();
@@ -116,14 +117,7 @@
             let tipoRegistroRUTAC = $('input[name="tipoRegistroRUTAC"]:checked').val();
 
             $("#contacto").slideUp();
-
-            if(tipoRegistroRUTAC === '4')
-            {
-                $("#matriculaCCSM").slideDown();
-            }
-            else{
-                $("#matriculaOtras").slideDown();
-            }
+            $("#infoUnidad").slideDown();
         });
 
     });

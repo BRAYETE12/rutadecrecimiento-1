@@ -8,7 +8,6 @@ use App\Http\Services\reCAPTCHAv3;
 use App\Http\Services\SICAM32;
 use App\Http\Services\UnidadProductivaService;
 use App\Http\Services\UsuarioService;
-use App\Models\CiiuActividad;
 use App\Models\Sector;
 use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
@@ -36,7 +35,7 @@ class RegistroController extends Controller
             'sectores'=> Sector::get(),
         ];
 
-        $view = Auth::check() ? 'website.register.create_company' : 'website.register.indexp';
+        $view = Auth::check() ? 'website.register.create_company' : 'website.register.index';
         return view($view, $data);
     }
 
@@ -49,27 +48,43 @@ class RegistroController extends Controller
             return [ 'success'=> false, 'mensaje'=> self::MENSAJE_NO_ENCONTRO_UNIDAD ];
         }
 
-        $resultado = $api->DATOS->expedientes[0];
+        $listado = [];
 
-        if ($this->existeNitUnidad($resultado->nit) || $this->existeNombreUnidad($resultado->nombre)) {
-            return [ 'success'=> false, 'mensaje'=> self::MENSAJE_EXISTE_UNIDAD ];
+        foreach($api->DATOS->expedientes as $item)
+        {
+            $listado[] = [ 'nombre'=> $item->nombre, 'nit'=> $item->nit];
         }
         
-        return [
-            'success'=> true,
-            'nombre'=> $resultado->nombre,
-            'nit'=> $resultado->nit,
-            'email'=> \App\helpers::maskPartialInfo($resultado->emailcom),
-        ];
+        return [ 'success'=> true, 'listado'=> $listado ];
     }
 
-    // Buscar usuario
-    public function searchUsuario(Request $request)
+    // Buscar unidad en CCMS detalles
+    public function searchDetail(Request $request)
+    {
+        $api = SICAM32::consultarExpedienteMercantilporIdentificacion($request->search_nit);
+
+        if (!is_object($api) || $api->RESPUESTA !== 'EXITO' || empty($api->DATOS)) {
+            $error = $api->MENSAJE ?? self::MENSAJE_NO_VALIDADA;
+
+            return [ 'success' => false, 'mensaje' => $error ];
+        }
+
+        $datos = CrearUnidadService::datosApi($api->DATOS);
+        
+        return [ 'success'=> true, 'datos'=> $datos ];
+    }
+
+    // Crear usuario
+    public function crearUsuario(Request $request)
     {
         $exists = User::where('email', $request->email)->exists();
 
+        $user = UsuarioService::crearUsuario($request);
+
         return [
-            'success' => $exists,
+            'success' => true,
+            'existe' => $exists,
+            'user_id' => $user->id ?? null,
             'mensaje' => $exists ? self::MENSAJE_EXISTE_USUARIO : null,
         ];
     }
@@ -83,87 +98,31 @@ class RegistroController extends Controller
                     ->with('error', 'No PASATE EL FILTRO DE SEGURIDAD ANTIROBOTS. Intentalo nuevamente');
         */
 
-        // Validación si el usuario existe
-        if (!Auth::check() && User::where('email', $request->user_email)->first() != null)
-        {
-           return [ 'success' => false, 'mensaje' => self::MENSAJE_EXISTE_USUARIO ];
-        }
-
-        // Creación del usuario y contraseña para acceder al sistema
-        $user = UsuarioService::crearUsuario($request);
-
-        if($request->tipo_registro_rutac == '4')
-        {
-            return $this->storeFormalCCSM($request, $user);
-        }
-        
-        return $this->storeLead($request, $user);
-    }
-
-    // Registro del formal Magdalena
-    private function storeFormalCCSM(Request $request, $user)
-    {
-        $api = SICAM32::consultarExpedienteMercantilporIdentificacion($request->search_nit);
-
-        if (!is_object($api) || $api->RESPUESTA !== 'EXITO' || empty($api->DATOS)) {
-            $error = $api->MENSAJE ?? self::MENSAJE_NO_VALIDADA;
-
-            return [ 'success' => false, 'mensaje' => $error ];
-        }
-
-        $values = $api->DATOS;
-
-        if ($this->existeNitUnidad($values->nit) || $this->existeNombreUnidad($values->nombre)) {
+        if( $this->existeUnidad($request->nit_registrado, $request->business_name) ){
             return [ 'success' => false, 'mensaje' => self::MENSAJE_EXISTE_UNIDAD ];
-        }
-
-        // Crear unidad
-        $company = CrearUnidadService::crearDesdeAPI($values, $request, $user->id);
-
-        UnidadProductivaService::validarRenovacion($values->fecharenovacion, $company->unidadproductiva_id);
-        UnidadProductivaService::validarSiguienteRenovacion($values->fechamatricula, $values->fecharenovacion, $company->unidadproductiva_id);
-
-        //Registra la unidad en ruta C
-        $this->registarUnidadProductivaRutaC($company);
-
-        return [ 'success' => true ];
-    }
-
-    // Registro no formales y camara externa
-    public function storeLead(Request $request, $user)
-    {
-        // Validación si ya existe el nit o el nombre
-        if( ( $request->tipo_registro_rutac == 3 && $this->existeNitUnidad($request->nit_registrado)) || $this->existeNombreUnidad($request->business_name) ){
-            return [ 'success' => false, 'mensaje' => self::MENSAJE_EXISTE_UNIDAD ];
-        }
-        
-        if (Auth::check()) {
-            /** @var User $user */
-            $user = Auth::user();
-
-            $unidad = $user->unidadesProductivas()->first();
-
-            $request->merge([
-                'tipoPersonaID' => $unidad->identificacion ? 0 : 2,
-                'tipo_identificacion' => $unidad->identificacion ? 1 : 2,
-                'document' => $unidad->identificacion ?? $unidad->nit,
-                'personaRAZONSOCIAL' => $unidad->name_legal_representative,
-                'personaNOMBRES' => $unidad->name_legal_representative,
-                'personaAPELLIDOS' => '',
-            ]);
         }
 
         $tipoPersona = UnidadProductivaPersona::where('tipoPersonaCODIGO', $request->tipoPersonaID)->first();
         $tipoRegistro = UnidadProductivaTipo::where('unidadtipo_id', $request->tipo_registro_rutac)->first();
 
+        if (Auth::check())
+            $request->merge(['user_id' => auth()->id()]);
+
         // Crear unidad
-        $company = CrearUnidadService::crearDesdeLead($request, $tipoPersona, $tipoRegistro, $user);
+        $company = CrearUnidadService::crear($request, $tipoPersona, $tipoRegistro);
 
         //Registra la unidad en ruta C
         $this->registarUnidadProductivaRutaC($company);
 
+        // loguear al usuario
+        $this->loguinUser($request->user_id);
+        
+        // Set por defecto la unidad creada
+        UnidadProductivaService::setUnidadProductiva($company->unidadproductiva_id);
+
         return [ 'success' => true ];
     }
+
 
     // Registrar la unidad productiva en ruta c
     private function registarUnidadProductivaRutaC($company)
@@ -176,16 +135,26 @@ class RegistroController extends Controller
         return $UnidadProductiva;
     }
 
-    // validar si existe la unidad productiva por el nit
-    private function existeNitUnidad($nit): bool
+    // validar si existe la unidad productiva
+    private function existeUnidad($nit, $name): bool
     {
-        return UnidadProductiva::where('nit', 'like', "%$nit%")->exists();
+        $query = UnidadProductiva::where(function($q) use ($name, $nit) {
+            $q->where('business_name', 'like', "%$name%");
+            
+            if (!empty($nit)) {
+                $q->orWhere('nit', 'like', "%$nit%");
+            }
+        });
+
+        return $query->exists();
     }
 
-    // validar si existe la unidad productiva por el nombre
-    private function existeNombreUnidad($name): bool
+    private function loguinUser($id)
     {
-        return UnidadProductiva::where('business_name', 'like', "%$name%")->exists();
+        $user = User::find($id);
+
+        if (!Auth::check())
+            Auth::login($user);
     }
 
 }

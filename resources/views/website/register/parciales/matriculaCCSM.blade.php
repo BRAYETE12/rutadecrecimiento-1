@@ -39,20 +39,15 @@
             A continuación se muestran los datos de la empresa que coinciden con los valores ingresados. <b>Por favor valide y confirme si es correcto.</b>
         </p>
 
-        <div class="shadow-sm p-3">
-            <p class="fs-5 text-black m-0" id="busquedaResultado" >
-                Razon social: <b>...</b> <br>
-                Nit: <b>...</b> <br>
-                Email: <b>...</b>               
-            </p>
+        <div id="busquedaResultado" >
         </div>
 
         <div class="col-12 col-md-12 my-3">
             <button type="button" id="matriculaCCSMCorrectoBtn" class="button button-primary">
-                Es correcto y deseo continuar 
+                CONTINUAR
             </button>
             <button type="button" id="matriculaCCSMBusquedaBtn" class="button button-secundary mt-3">
-                Los datos son incorrectos
+                VOLVER
             </button>
         </div>
 
@@ -70,7 +65,9 @@
             const type = $('#search_type').val();
 
             $('#screenLoader').removeClass('d-none');
-            $('#errorMessage').addClass('d-none').text('');
+            ocultarAlerta();
+
+            $('#busquedaResultado').html('');    
 
             $.ajax({
                 url: '/registro/buscar',
@@ -82,12 +79,18 @@
                         return mostrarAlerta(response.mensaje);
                     }
 
-                    $('#busquedaResultado').html(`
-                        Razón social: <b>${response.nombre}</b><br>
-                        NIT: <b>${response.nit}</b><br>
-                        Email: <b>${response.email}</b>
-                    `);
-
+                    response.listado.forEach(item => {
+                        $('#busquedaResultado').append(`
+                            <label class="unidad shadow-sm p-3 my-2 d-block border rounded" style="cursor: pointer;">
+                                <input type="radio" name="unidadSeleccionada" value="${item.nit}" class="me-2" required />
+                                <span>
+                                    Razón social: <b>${item.nombre}</b><br>
+                                    NIT: <b>${item.nit}</b>
+                                </span>
+                            </label>
+                        `);                    
+                    });
+                    
                     $("#search_nit").val(response.nit);
 
                     $("#matriculaCCSMBusqueda").slideUp();
@@ -102,16 +105,50 @@
             });
         });
 
-
         $('#matriculaCCSMVolver').on('click', function () {
             $("#matriculaCCSM").slideUp();
             $("#tipoRegistro").slideDown();
         });
 
-
         $('#matriculaCCSMCorrectoBtn').on('click', function () {
-            $("#matriculaCCSM").slideUp();
-            $("#contacto").slideDown();
+
+            const search_nit = $('input[name="unidadSeleccionada"]:checked').val();
+
+            if (!search_nit) {
+                return mostrarAlerta("Por favor seleccione una unidad para continuar.");
+            }
+
+            $('#screenLoader').removeClass('d-none');
+            ocultarAlerta();
+
+            $.ajax({
+                url: '/registro/buscar/detalles',
+                method: 'POST',
+                data: { search_nit: search_nit, _token: '{{ csrf_token() }}' },
+                success: function (response) {
+                    
+                    if (!response.success) {
+                        return mostrarAlerta(response.mensaje);
+                    }
+
+                    for(let input in response.datos){
+                        $("#"+input).val(response.datos[input]);
+                    }
+
+                    initselect('/municipios/listado', response.datos.department_id , '#municipality_id', response.datos.municipality_id);
+                    initselect('/secciones/listado', response.datos.sector_id, '#seccion', response.datos.seccion);
+                    initselect('/actividades/listado', response.datos.seccion, '#ciiuactividad_id', response.datos.ciiuactividad_id);
+                    
+                    $("#matriculaCCSM").slideUp();
+                    $("#matriculaFormal").slideDown();
+                },
+                error: function () {
+                    mostrarAlerta("Ocurrió un error en la busqueda de la unidad.");
+                },
+                complete: function () {
+                    $('#screenLoader').addClass('d-none');
+                }
+            });
         });
 
         $('#matriculaCCSMBusquedaBtn').on('click', function () {

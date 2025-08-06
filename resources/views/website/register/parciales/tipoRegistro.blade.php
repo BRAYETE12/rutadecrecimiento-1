@@ -129,16 +129,6 @@
 
             $("#banner_info_idea").hide();
 
-            $(".camara_comercio").hide();
-            $(".registration_number").hide();
-            $(".nit_registrado").hide();
-            $(".name_legal_representative").hide();
-
-            $("#camara_comercio").removeAttr("required");
-            $("#registration_number").removeAttr("required");
-            $("#nit_registrado").removeAttr("required");
-            $("#name_legal_representative").removeAttr("required");
-
             $('#tipoPersonaID option').hide();
             $('#tipoPersonaID option[value="0"]').show();
             $('#tipoPersonaID option[value="0"]').attr("selected", "selected");
@@ -157,37 +147,28 @@
         }
 
         function abrirFormularioMatriculaCCSM() {
+            $(".tituloSegunTipo").html("Empresa");
             $("#matriculaCCSM").slideDown();
         }
 
         function abrirFormularioMatriculaOTRACAM() 
         {
-            $(".camara_comercio").show();
-            $(".registration_number").show();
-            $(".nit_registrado").show();
-            $(".name_legal_representative").show();
-
-            $("#camara_comercio").attr("required", "required");
-            $("#registration_number").attr("required", "required");
-            $("#nit_registrado").attr("required", "required");
-            $("#name_legal_representative").attr("required", "required");
-
             $(".tituloSegunTipo").html("Empresa");
-            $("#matriculaOtras").slideDown();
+            $("#matriculaFormal").slideDown();
         }
 
 
         function abrirFormularioInformal() 
         {
             $(".tituloSegunTipo").html("Idea de Negocio");
-            $("#matriculaOtras").slideDown();
+            $("#infoUnidad").slideDown();
         }
 
         function abrirFormularioIdea() 
         {
             $("#banner_info_idea").show();
             $(".tituloSegunTipo").html("Idea de Negocio");
-            $("#matriculaOtras").slideDown();
+            $("#infoUnidad").slideDown();
         }
 
 

@@ -89,7 +89,7 @@
             }
 
             $('#screenLoader').removeClass('d-none');
-            $('#errorMessage').addClass('d-none').text('');
+            ocultarAlerta();
 
             let tipoRegistroRUTAC = $('input[name="tipoRegistroRUTAC"]:checked').val();
 
@@ -99,26 +99,30 @@
             let dataUnidad = [];
 
             if(tipoRegistroRUTAC == '4'){
-                dataUnidad = $('#matriculaCCSMForm').serializeArray();
+                dataUnidad = $('#infoUnidadForm').serializeArray();
             }
             else{
-                dataUnidad = $('#matriculaOtrasForm').serializeArray();
+                dataUnidad = $('#infoUnidadForm').serializeArray();
             }
 
             const allData = [...dataUsuario, ...dataContacto, ...dataUnidad];
-            const data = Object.fromEntries(allData.map(item => [item.name, item.value]));
-            data.tipo_registro_rutac = tipoRegistroRUTAC;
-            data._token = '{{ csrf_token() }}';
+            allData.push({ name: 'tipo_registro_rutac', value: tipoRegistroRUTAC });
+            allData.push({ name: '_token', value: '{{ csrf_token() }}' });
 
             $.ajax({
                 url: '/registro/store',
                 method: 'POST',
-                data: data,
+                data: allData,
                 success: function (response) {
 
+                    if (!response.success) {
+                      return mostrarAlerta(response.mensaje);
+                    }
+
+                    window.location.href = "/dashboard";                    
                 },
                 error: function () {
-                    mostrarAlerta("Ocurrió un error al verificar el usuario.");
+                    mostrarAlerta("Ocurrió un error al verificar la información.");
                 },
                 complete: function () {
                     $('#screenLoader').addClass('d-none');
@@ -136,7 +140,8 @@
 </script>
 
 <style>
-    #tipoRegistroResumen input[type="radio"] {
+    #tipoRegistroResumen input[type="radio"],
+    #infoResumen input[type="radio"] {
         display: none;
     }
     #tipoRegistroResumen img{

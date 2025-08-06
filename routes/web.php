@@ -26,7 +26,8 @@ Route::get('/mapa-sitio', [InicioController::class, 'mapa'])->name('site.map');
 /* Rutas de registro */
 Route::get('/registro', [RegistroController::class, 'index'])->name('register');
 Route::post('/registro/buscar', [RegistroController::class, 'search'])->name('register.search');
-Route::post('/registro/buscarUsuario', [RegistroController::class, 'searchUsuario'])->name('register.searchUsuario');
+Route::post('/registro/buscar/detalles', [RegistroController::class, 'searchDetail'])->name('register.searchDetail');
+Route::post('/registro/crearUsuario', [RegistroController::class, 'crearUsuario'])->name('register.crearUsuario');
 Route::post('/registro/store', [RegistroController::class, 'store'])->name('register.save');
 
 /* Rutas de empresa */

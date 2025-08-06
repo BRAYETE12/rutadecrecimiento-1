@@ -10,35 +10,31 @@ use App\Models\UnidadProductivaTipo;
 
 class CrearUnidadService
 {
-    public static function crearDesdeAPI($values, $request, $userId): UnidadProductiva
+    public static function datosApi($values)
     {
         $comercial_activity = substr($values->ciiu1, 1);
         $activity = CiiuActividad::where('ciiuActividadCODIGO', $comercial_activity)->first();
         
-        $company = new UnidadProductiva();
-
-        $company->fill([
+        $data = [
             'business_name' => $values->nombre,
-            'nit' => $values->nit,
+            'nit_registrado' => $values->nit,
             'registration_number' => $values->matricula,
             'registration_date' => date("Y-m-d", strtotime($values->fechamatricula)),
-            'registration_email' => $values->emailcom ?: $values->email,
+            'registration_email' => $values->emailcom ?? null,
+
             'address' => $values->dircom,
-            'mobile' => $values->telcom1,
-            'affiliated' => $values->afiliado,
+            'mobile' => $values->telcom1 ?? $values->telcom2 ?? $values->telcom3,
+            'telephone'=> $values->telcom3 ?? $values->telcom2 ?? $values->telcom1,
             'comercial_activity' => $comercial_activity,
-            'user_id' => $userId,
             'tamano_id' => $values->tamanoempresa,
             'camara_comercio' => 32,
+            'tamano_id' => $values->tamanoempresa,
 
-            'sector_id' => $activity->macroSectorID, 
-            'ciiuactividad_id' => $activity->ciiuactividad_id, 
-        ]);
+            'sector_id' => "{$activity->macroSectorID}", 
+            'ciiuactividad_id' => "{$activity->ciiuactividad_id}", 
+            'seccion' => "{$activity->ciiuSeccionID}"
 
-        $tipoRegistro = UnidadProductivaTipo::where('unidadtipo_id', 4)->first();
-        $company->unidadtipo_id = $tipoRegistro->unidadtipo_id;
-        $company->tipo_registro_rutac = $tipoRegistro->unidadtipo_nombre;
-        $company->logo = UnidadProductiva::getLogo($tipoRegistro->unidadtipo_id);
+        ];
 
         $tipoPersona = match ($values->organizacion) {
             '01' => UnidadProductivaPersona::where('tipopersona_id', 1)->first(),
@@ -46,32 +42,24 @@ class CrearUnidadService
             default => UnidadProductivaPersona::where('tipopersona_id', 3)->first(),
         };
 
-        $company->fill([
-            'tipo_identificacion' => SICAM32::codigoTIpoIdentificon($values->organizacion === '01' ? $values->idclase : $values->idclaserl),
-            'identificacion' => $values->organizacion === '01' ? $values->identificacion : $values->identificacionrl,
-            'name_legal_representative' => $values->organizacion === '01' ? $values->nombre : $values->nombrerl,
-            'tipopersona_id' => $tipoPersona->tipopersona_id,
-            'type_person' => $tipoPersona->tipoPersonaCODIGO,
-        ]);
+        $data['tipo_identificacion'] = SICAM32::codigoTIpoIdentificon($values->organizacion === '01' ? $values->idclase : $values->idclaserl);
+        $data['identificacion'] = $values->organizacion === '01' ? $values->identificacion : $values->identificacionrl;
+        $data['name_legal_representative'] = $values->organizacion === '01' ? $values->nombre : $values->nombrerl;
+        $data['tipopersona_id'] = $tipoPersona->tipopersona_id;
+        $data['type_person'] = $tipoPersona->tipoPersonaCODIGO;
 
         $municipio = Municipio::where('municipioCODIGODANE', $values->muncom)->first();
-        $company->department_id = $municipio->departamentoID;
-        $company->municipality_id = $municipio->municipio_id;
+        $data['department_id'] = "{$municipio->departamentoID}";
+        $data['municipality_id'] = "{$municipio->municipio_id}";
 
-        $company->fill([
-            'contact_person' => $request->contact_person,
-            'contact_position' => $request->contact_position,
-            'contact_sexo' => $request->contact_sexo,
-            'contact_email' => $request->contact_email,
-            'contact_phone' => $request->contact_phone,
-        ]);
+        $data['contact_person'] = $data['name_legal_representative'];
+        $data['contact_email'] = $data['registration_email'];
+        $data['contact_phone'] = $data['mobile'];
 
-        $company->save();
-
-        return $company;
+        return $data;
     }
 
-    public static function crearDesdeLead($request, $tipoPersona, $tipoRegistro, $user): UnidadProductiva
+    public static function crear($request, $tipoPersona, $tipoRegistro): UnidadProductiva
     {
         $tipoIdentificacion = SICAM32::codigoTIpoIdentificon($request->tipo_identificacion);
 
@@ -90,16 +78,16 @@ class CrearUnidadService
             'sector_id' => $request->sector_id, 
             'ciiuactividad_id' => $request->ciiuactividad_id, 
             
-            'municipality_id' => $request->municipality,
-            'municipality_viejo' => $request->municipality,
-            'department_id' => $request->department,
-            'department_viejo' => $request->department,   
+            'municipality_id' => $request->municipality_id,
+            'municipality_viejo' => $request->municipality_id,
+            'department_id' => $request->department_id,
+            'department_viejo' => $request->department_id,   
             
-            'geolocation' => UnidadProductivaService::localizacion($request->department, $request->municipality, $request->address),
+            'geolocation' => UnidadProductivaService::localizacion($request->department_id, $request->municipality_id, $request->address),
             
             'name_legal_representative' => $request->name_legal_representative,
             'affiliated' => 0,
-            'user_id' => $user->id,
+            'user_id' => $request->user_id,
             'tipo_identificacion' => $tipoIdentificacion,
             'identificacion' => $request->document,
             
@@ -151,7 +139,7 @@ class CrearUnidadService
             'unidadProductivaEMAIL' => $company->registration_email,
             'unidadProductivaENLACE' => $company->address,
             'unidadProductivaTELEFONO' => $company->mobile,
-            'municipioCODIGODANE' => $municipio->dame, /* COLOCAR CODIGO DANE */
+            'municipioCODIGODANE' => $municipio->municipioCODIGODANE,
             'unidadProductivaDIRECCION' => $company->address,
             'unidadProductivaCONTACTONOMBRE' => $company->name_legal_representative,
             'unidadProductivaCONTACTOEMAIL' => $company->registration_email,
