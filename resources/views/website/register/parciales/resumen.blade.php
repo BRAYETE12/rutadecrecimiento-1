@@ -94,18 +94,17 @@
             let tipoRegistroRUTAC = $('input[name="tipoRegistroRUTAC"]:checked').val();
 
             // Serializa todos los formularios y los une
-            const dataUsuario = $('#usuarioform').serializeArray();            
+            const dataUsuario = $('#usuarioform').serializeArray();      
+            const dataUnidad = $('#infoUnidadForm').serializeArray();      
             const dataContacto = $('#contactoform').serializeArray();
-            let dataUnidad = [];
+            let dataFormal = [];            
 
-            if(tipoRegistroRUTAC == '4'){
-                dataUnidad = $('#infoUnidadForm').serializeArray();
-            }
-            else{
-                dataUnidad = $('#infoUnidadForm').serializeArray();
+            if(tipoRegistroRUTAC == '4' || tipoRegistroRUTAC == '3')
+            {
+                dataFormal = $('#matriculaFormalForm').serializeArray();
             }
 
-            const allData = [...dataUsuario, ...dataContacto, ...dataUnidad];
+            const allData = [...dataUsuario, ...dataFormal, ...dataUnidad, ...dataContacto];
             allData.push({ name: 'tipo_registro_rutac', value: tipoRegistroRUTAC });
             allData.push({ name: '_token', value: '{{ csrf_token() }}' });
 
@@ -115,16 +114,16 @@
                 data: allData,
                 success: function (response) {
 
-                    if (!response.success) {
-                      return mostrarAlerta(response.mensaje);
+                    if (!response.success) 
+                    {
+                        $('#screenLoader').addClass('d-none');
+                        return mostrarAlerta(response.mensaje);
                     }
 
                     window.location.href = "/dashboard";                    
                 },
                 error: function () {
                     mostrarAlerta("Ocurrió un error al verificar la información.");
-                },
-                complete: function () {
                     $('#screenLoader').addClass('d-none');
                 }
             });

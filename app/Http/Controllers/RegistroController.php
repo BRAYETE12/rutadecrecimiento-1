@@ -33,10 +33,10 @@ class RegistroController extends Controller
             'departamentos' => CommonService::departamentos(),
             'listaCargos'=> SICAM32::listadoViculosCargos(),
             'sectores'=> Sector::get(),
+            'loguin'=> Auth::check()
         ];
 
-        $view = Auth::check() ? 'website.register.create_company' : 'website.register.index';
-        return view($view, $data);
+        return view('website.register.index', $data);
     }
 
     // Buscar unidad en CCMS

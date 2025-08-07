@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-12 col-md-6 mt-3">
                         <label>Teléfono (opcional)</label>
-                        <input type="text" name="telephone"/>
+                        <input type="text" name="telephone" value="{{$company->telephone}}"  />
                     </div>
 
                     <div class="col-12 col-md-6 mt-3">
@@ -86,7 +86,7 @@
 
                     <div class="col-12 col-md-6 mt-3">
                         <label>Nombre *</label>
-                        <input type="text" name="contact_person" value="{{$company->name_legal_representative}}" required  style="text-transform: uppercase;" />
+                        <input type="text" name="contact_person" value="{{$company->contact_person}}" required  style="text-transform: uppercase;" />
                     </div>
                     <div class="col-12 col-md-6 mt-3">
                         <label>Cargo *</label>
@@ -131,19 +131,19 @@
 
                     <div class="col-12 col-md-6 mt-3">
                         <label>URL del Sitio Web (Opcional)</label>
-                        <input type="text" name="website"/>
+                        <input type="text" name="website" value="{{$company->website}}" />
                     </div>
                     <div class="col-12 col-md-6 mt-3">
                         <label>Instagram (Opcional)</label>
-                        <input type="text" name="social_instagram"/>
+                        <input type="text" name="social_instagram" value="{{$company->social_instagram}}" />
                     </div>
                     <div class="col-12 col-md-6 mt-3">
                         <label>Facebook (Opcional)</label>
-                        <input type="text" name="social_facebook"/>
+                        <input type="text" name="social_facebook" value="{{$company->social_facebook}}" />
                     </div>
                     <div class="col-12 col-md-6 mt-3">
                         <label>LinkedIn (Opcional)</label>
-                        <input type="text" name="social_linkedin"/>
+                        <input type="text" name="social_linkedin" value="{{$company->social_linkedin}}" />
                     </div>
                 </div>
 

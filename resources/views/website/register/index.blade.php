@@ -91,6 +91,12 @@
             });
         }
     }
+
+    @if ($loguin)
+        $("#usuario").addClass("hidden");
+        $("#tipoRegistro").removeClass("hidden");        
+    @endif
+
 </script>
 
 @endsection

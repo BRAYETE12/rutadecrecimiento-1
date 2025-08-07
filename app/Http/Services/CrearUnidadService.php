@@ -6,7 +6,6 @@ use App\Models\CiiuActividad;
 use App\Models\Municipio;
 use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
-use App\Models\UnidadProductivaTipo;
 
 class CrearUnidadService
 {
@@ -66,11 +65,13 @@ class CrearUnidadService
         $company = new UnidadProductiva();
 
         $company->fill([
+            'camara_comercio' => $request->camara_comercio,
+            'nit' => $request->nit_registrado ?? "-",
             'business_name' => $request->business_name,
             'description' => $request->description,
             'registration_number' => $request->registration_number,
             'registration_date' => $request->registration_date,
-            'registration_email' => $request->email,
+            'registration_email' => $request->registration_email ?? $request->contact_email,
             'address' => $request->address,
             'telephone' => $request->telephone,  
             'mobile' => $request->mobile, 
@@ -102,13 +103,19 @@ class CrearUnidadService
             'contact_sexo' => $request->contact_sexo,
             'contact_email' => $request->contact_email,
             'contact_phone' => $request->contact_phone,
-        ]);
 
-        $company->nit = $request->nit_registrado;
+            'website' => $request->website,
+            'social_instagram' => $request->social_instagram,
+            'social_facebook' => $request->social_facebook,
+            'social_linkedin' => $request->social_linkedin,
+
+        ]);
 
         if ($request->tipo_registro_rutac == 1) {
             $company->anual_sales = 0;
         }
+
+        $company->update_info = 1;
 
         $company->save();
 

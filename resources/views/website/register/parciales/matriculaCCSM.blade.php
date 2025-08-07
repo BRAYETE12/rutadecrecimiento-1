@@ -22,8 +22,6 @@
                 <input class="form-control" type="text" id="search_name" name="search_name" placeholder="Búsqueda" required />
             </div>
 
-            <input type="hidden" id="search_nit" name="search_nit"  required />
-
             <div class="col-12 col-md-12 my-3">
                 <button type="submit" id="matriculaCCSMBtn" class="button button-primary">BUSCAR EMPRESA</button>
                 <button type="button" id="matriculaCCSMVolver" class="button button-secundary mt-3">VOLVER</button>
@@ -85,14 +83,12 @@
                                 <input type="radio" name="unidadSeleccionada" value="${item.nit}" class="me-2" required />
                                 <span>
                                     Razón social: <b>${item.nombre}</b><br>
-                                    NIT: <b>${item.nit}</b>
+                                    NIT: <b class="nit" >${item.nit}</b>
                                 </span>
                             </label>
                         `);                    
                     });
                     
-                    $("#search_nit").val(response.nit);
-
                     $("#matriculaCCSMBusqueda").slideUp();
                     $("#matriculaCCSMDetalle").slideDown();
                 },
