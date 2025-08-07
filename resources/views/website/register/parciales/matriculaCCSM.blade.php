@@ -135,6 +135,11 @@
                     initselect('/secciones/listado', response.datos.sector_id, '#seccion', response.datos.seccion);
                     initselect('/actividades/listado', response.datos.seccion, '#ciiuactividad_id', response.datos.ciiuactividad_id);
                     
+                    $('#camara_comercio').attr('disabled', true);
+                    $('#registration_number').attr('disabled', true);
+                    $('#nit_registrado').attr('disabled', true);
+                    $('#name_legal_representative').attr('disabled', true);
+
                     $("#matriculaCCSM").slideUp();
                     $("#matriculaFormal").slideDown();
                 },

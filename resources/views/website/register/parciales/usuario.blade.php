@@ -92,6 +92,10 @@
                     }
 
                     $("#user_id").val(response.user_id);
+
+                    const mail = $("#user_email").val();
+                    $("#registration_email").val(mail);
+                    $("#contact_email").val(mail);
                     
                     $('#usuario').slideUp();
                     $('#tipoRegistro').show();

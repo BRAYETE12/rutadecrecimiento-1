@@ -135,6 +135,11 @@
             $("#tipoPersonaID").change();
             $("#tipoPersonaID").attr('read-only', true);
 
+            $('#camara_comercio').attr('disabled', false);
+            $('#registration_number').attr('disabled', false);
+            $('#nit_registrado').attr('disabled', false);
+            $('#name_legal_representative').attr('disabled', false);
+
             switch (tipoRegistroRUTAC) 
             {
                 case "1": abrirFormularioIdea(); break;
