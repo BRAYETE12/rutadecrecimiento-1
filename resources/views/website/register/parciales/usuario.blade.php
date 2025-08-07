@@ -33,6 +33,26 @@
                     <input type="email" class="form-control" id="user_email" name="user_email" placeholder="Correo Electrónico" required>
                 </div>
 
+                
+<div class="col-12 col-md-12 mb-3">
+    <label for="como_se_entero" class="form-label">¿Cómo te enteraste de Ruta C?</label>
+    <select class="form-select" id="como_se_entero" name="como_se_entero" required>
+        <option value="">Seleccione una opción</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="correo_electronico">Correo Electrónico</option>
+        <option value="mensaje_texto">Mensaje de Texto</option>
+        <option value="llamada_telefonica">Llamada Telefónica</option>
+        <option value="redes_sociales">Redes Sociales</option>
+        <option value="evento">Evento</option>
+        <option value="otro">Otro</option>
+    </select>
+</div>
+
+<div class="col-12 col-md-12 mb-3 d-none" id="otro_origen_container">
+    <label for="otro_origen" class="form-label">Por favor, especifique</label>
+    <input type="text" class="form-control" id="otro_origen" placeholder="¿Cuál?">
+</div>
+
                 <div class="col-12 col-md-12 mb-3">
                     <label for="user_password" class="form-label">Contraseña</label>
                     <div class="input-group">
@@ -120,4 +140,30 @@
         });
 
     });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const select = document.getElementById('como_se_entero');
+    const otroContainer = document.getElementById('otro_origen_container');
+    const otroInput = document.getElementById('otro_origen');
+
+    select.addEventListener('change', function() {
+        if (select.value === 'otro') {
+            otroContainer.classList.remove('d-none');
+            otroInput.required = true;
+        } else {
+            otroContainer.classList.add('d-none');
+            otroInput.required = false;
+            otroInput.value = '';
+        }
+    });
+
+    // Opcional: para enviar el valor escrito si selecciona "otro"
+    document.getElementById('usuarioform').addEventListener('submit', function(e) {
+        if (select.value === 'otro' && otroInput.value.trim() !== '') {
+            select.value = otroInput.value.trim();
+        }
+    });
+});
 </script>
