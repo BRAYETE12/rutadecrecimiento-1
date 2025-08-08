@@ -6,6 +6,7 @@ use App\Models\CiiuActividad;
 use App\Models\Municipio;
 use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
+use App\Models\User;
 
 class CrearUnidadService
 {
@@ -61,6 +62,7 @@ class CrearUnidadService
     public static function crear($request, $tipoPersona, $tipoRegistro): UnidadProductiva
     {
         $tipoIdentificacion = SICAM32::codigoTIpoIdentificon($request->tipo_identificacion);
+        $user = User::find($request->user_id);
 
         $company = new UnidadProductiva();
 
@@ -86,11 +88,11 @@ class CrearUnidadService
             
             'geolocation' => UnidadProductivaService::localizacion($request->department_id, $request->municipality_id, $request->address),
             
-            'name_legal_representative' => $request->name_legal_representative,
+            'name_legal_representative' => $request->name_legal_representative ?? ($user->name .' '. $user->lastname),
             'affiliated' => 0,
             'user_id' => $request->user_id,
             'tipo_identificacion' => $tipoIdentificacion,
-            'identificacion' => $request->document,
+            'identificacion' => $request->identificacion ?? $user->identification,
             
             'unidadtipo_id' => $tipoRegistro->unidadtipo_id,
             'tipo_registro_rutac' => $tipoRegistro->unidadtipo_nombre,
@@ -125,12 +127,14 @@ class CrearUnidadService
     public static function datosRegistroRutaC($company): array
     {
         $municipio = Municipio::where('municipio_id', $company->municipality_id)->first();
+        $tipoPersona = UnidadProductivaPersona::where('tipopersona_id', $company->tipopersona_id)->first();
 
         return [
             'personaNIT' => $company->nit,
-            'tipoPersonaRUTAC' => $company->tipopersona_id,
-            'tipoPersonaCODIGO' => UnidadProductivaPersona::find($company->tipopersona_id)->tipoPersonaNOMBRE,
+            'tipoPersonaRUTAC' => $tipoPersona->tipopersona_id,
+            'tipoPersonaCODIGO' => $tipoPersona->tipoPersonaNOMBRE,
             'tipoIdentificacionCODIGO' => $company->tipo_identificacion,
+            
             'personaIDENTIFICACION' => $company->identificacion,
             'personaRAZONSOCIAL' => $company->business_name,
             'personaNOMBRES' => $company->name_legal_representative,
@@ -138,9 +142,10 @@ class CrearUnidadService
             'correoDIRECCION' => $company->registration_email,
             'telefonoNUMEROCELULAR' => $company->mobile,
             'direccionCOMERCIAL' => $company->address,
+            
             'unidadProductivaTIPOREGISTRORUTAC' => $company->tipo_registro_rutac,
             'unidadProductivaTIPOREGISTRORUTACID' => $company->unidadtipo_id,
-            'unidadProductivaFCHINICIO' => $company->registration_date,
+            'unidadProductivaFCHINICIO' => $company->registration_date->format('Y-m-d'),
             'unidadProductivaTITULO' => $company->business_name,
             'unidadProductivaDESCRIPCION' => $company->description,
             'unidadProductivaEMAIL' => $company->registration_email,
@@ -153,7 +158,7 @@ class CrearUnidadService
             'unidadProductivaCONTACTOTELEFONO' => $company->mobile,
             'unidadProductivaCAMARADECOMERCIO' => $company->camara_comercio,
             'unidadProductivaMATRICULA' => $company->registration_number,
-            'unidadProductivaFCHMATRICULA' => $company->registration_date,
+            'unidadProductivaFCHMATRICULA' => $company->registration_date->format('Y-m-d'),
             'unidadProductivaNIT' => $company->nit,
             'unidadProductivaREPRESENTANTELEGAL' => $company->name_legal_representative,
             'REQUEST1' => $company->toArray(),

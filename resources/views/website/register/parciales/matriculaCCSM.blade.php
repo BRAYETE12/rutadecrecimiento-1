@@ -27,6 +27,9 @@
                 <button type="button" id="matriculaCCSMVolver" class="button button-secundary mt-3">VOLVER</button>
             </div>
 
+
+            <input type="hidden" name="identificacion" id="identificacion">
+
         </form>
     </div>
 
