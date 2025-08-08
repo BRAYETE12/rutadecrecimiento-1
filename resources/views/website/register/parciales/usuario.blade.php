@@ -49,8 +49,8 @@
 </div>
 
 <div class="col-12 col-md-12 mb-3 d-none" id="otro_origen_container">
-    <label for="otro_origen" class="form-label">Por favor, especifique</label>
-    <input type="text" class="form-control" id="otro_origen" placeholder="¿Cuál?">
+    <label for="como_se_entero" class="form-label">Por favor, especifique</label>
+    <input type="text" class="form-control" id="como_se_entero" placeholder="¿Cuál?">
 </div>
 
                 <div class="col-12 col-md-12 mb-3">
