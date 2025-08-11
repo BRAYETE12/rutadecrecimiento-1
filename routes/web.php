@@ -35,6 +35,15 @@ Route::get('/ingreso', [LoginController::class, 'index'])->name('login');
 Route::post('/ingreso/procesar', [LoginController::class, 'login'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('company.logout');
 
+/* Rutas de recuperación de contraseña */
+Route::get('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/password/email', [App\Http\Controllers\PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.update');
+
+/* Ruta de prueba para verificar estado del controlador */
+Route::get('/password/test', [App\Http\Controllers\PasswordResetController::class, 'checkApiStatus'])->name('password.test');
+
 Route::get('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic');
 Route::post('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic.saveVenta');
 Route::post('/empresa/diagnostico/procesar', [DiagnosticoController::class, 'store'])->name('company.diagnostic.save');

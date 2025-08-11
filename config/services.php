@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'external_email' => [
+        'api_url' => env('EXTERNAL_EMAIL_API_URL'),
+        'api_key' => env('EXTERNAL_EMAIL_API_KEY'),
+    ],
+
 ];
