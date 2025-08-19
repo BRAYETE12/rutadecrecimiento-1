@@ -143,7 +143,7 @@
             ocultarAlerta();
 
             let data = $('#usuarioform').serializeArray();
-            data.push({ name: '_token', value: '{{ csrf_token() }}' });
+            data.push({ name: '_token', value: '<?php echo e(csrf_token()); ?>' });
 
             $.ajax({
                 url: '/registro/crearUsuario',
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 method: 'POST',
                 data: {
                     credential: response.credential,
-                    _token: '{{ csrf_token() }}'
+                    _token: '<?php echo e(csrf_token()); ?>'
                 },
                 success: function(res) {
                     if (res.success) {
@@ -252,3 +252,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 </script>
 
+<?php /**PATH D:\Proyectos de Desarrollo\RUTAC\PROPUESTA_REGISTRO_LOGIN\rutadecrecimiento-1\resources\views/website/register/parciales/usuario.blade.php ENDPATH**/ ?>
