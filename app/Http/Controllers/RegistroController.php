@@ -13,6 +13,7 @@ use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
 use App\Models\UnidadProductivaTipo;
 use App\Models\User;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,11 +21,12 @@ class RegistroController extends Controller
 {
     private const MENSAJE_EXISTE_UNIDAD = "La empresa ya se encuentra registrada. Utilice la opción de iniciar sesión";
     private const MENSAJE_EXISTE_USUARIO = "El correo electrónico ya se encuentra registrado. Utilice la opción de iniciar sesión";
+    private const MENSAJE_EXISTE_USUARIO_UNIDAD = "El correo electrónico ya se encuentra registrado en una unidad productiva.";
     private const MENSAJE_NO_ENCONTRO_UNIDAD = "No se encontraron empresas según el tipo de búsqueda. Valide los datos e intente nuevamente.";
     private const MENSAJE_NO_VALIDADA = "No pudimos validar su empresa. Intente nuevamente.";
 
     public function index()
-    {
+    { 
         $data = [
             'footer' => CommonService::footer(),
             'links' => CommonService::links(),
@@ -43,16 +45,29 @@ class RegistroController extends Controller
     public function search(Request $request)
     {
         $api = SICAM32::buscarRegistroMercantil($request->search_type, $request->search_name);
-
+        
         if (empty($api) || $api->RESPUESTA !== 'EXITO' || count($api->DATOS->expedientes) === 0) {
             return [ 'success'=> false, 'mensaje'=> self::MENSAJE_NO_ENCONTRO_UNIDAD ];
         }
 
         $listado = [];
-
+        
         foreach($api->DATOS->expedientes as $item)
         {
-            $listado[] = [ 'nombre'=> $item->nombre, 'nit'=> $item->nit];
+            if($item->nit && $item->nombre && $item->matricula)
+            {
+                $listado[] = 
+                [ 
+                    'nombre'=> $item->nombre, 
+                    'nit'=> $item->nit,
+                    'matricula'=> $item->matricula,
+                    'fechamatricula'=> (DateTime::createFromFormat("Ymd", $item->fechamatricula))->format("Y-m-d"),
+                ];
+            }
+        }
+
+        if (count($listado) === 0) {
+            return [ 'success'=> false, 'mensaje'=> self::MENSAJE_NO_ENCONTRO_UNIDAD ];
         }
         
         return [ 'success'=> true, 'listado'=> $listado ];
@@ -61,6 +76,10 @@ class RegistroController extends Controller
     // Buscar unidad en CCMS detalles
     public function searchDetail(Request $request)
     {
+        //if( $this->existeUnidad($request->search_nit, "") ){
+        //    return [ 'success' => false, 'mensaje' => self::MENSAJE_EXISTE_UNIDAD ];
+        //}
+        
         $api = SICAM32::consultarExpedienteMercantilporIdentificacion($request->search_nit);
 
         if (!is_object($api) || $api->RESPUESTA !== 'EXITO' || empty($api->DATOS)) {
@@ -77,16 +96,38 @@ class RegistroController extends Controller
     // Crear usuario
     public function crearUsuario(Request $request)
     {
-        $exists = User::where('email', $request->email)->exists();
+        $exists = User::where('email', $request->user_email)->exists();
 
-        $user = UsuarioService::crearUsuario($request);
-
+        if(!$exists)
+        {
+            $user = UsuarioService::crearUsuario($request);
+        }
+        
         return [
             'success' => true,
             'existe' => $exists,
-            'user_id' => $user->id ?? null,
             'mensaje' => $exists ? self::MENSAJE_EXISTE_USUARIO : null,
+            'user_id' => $user->id ?? null,
         ];
+    }
+
+    public function validarUsuario(Request $request)
+    {
+        $user = User::where('email', $request->user_email)->first();
+        
+        if ($user != null)
+        {
+            return [ 'success' => false, 'mensaje' => self::MENSAJE_EXISTE_USUARIO ];
+        }
+
+        $user = UnidadProductiva::where('registration_email', $request->user_email)->first();
+
+        if ($user != null)
+        {
+            return [ 'success' => true, 'unidad' => true, 'mensaje' => self::MENSAJE_EXISTE_USUARIO_UNIDAD ];
+        }
+        
+        return [ 'success' => true ];
     }
 
     // Guardar registro

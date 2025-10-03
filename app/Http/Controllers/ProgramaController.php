@@ -86,8 +86,8 @@ class ProgramaController extends Controller
         $inscripcion = ConvocatoriaInscripcion::where('convocatoria_id', $convocatoria->convocatoria_id)
             ->where('unidadproductiva_id', $unidadProductiva->unidadproductiva_id)
             ->latest()->first();
-        $states = [0, 1, 2, 4, 5]; // Estados en los cuales no puede volver a inscribirse en un programa
-        
+        $states = [0, 1, 3, 2, 4, 5]; // Estados en los cuales no puede volver a inscribirse en un programa
+ 
         if ($inscripcion && in_array($inscripcion->inscripcionestado_id, $states)) {
             $already_subscribed = true;
         }

@@ -46,6 +46,31 @@
         top: 10px;
         z-index: 100;
     }
+
+    form .row{
+        display: flex;
+        margin-bottom: 0;
+    }
+    .form-group:has(input[required]),
+    .form-group:has(select[required]),
+    .form-group:has(textarea[required]) {
+        position: relative;
+    }
+
+    .form-group:has(input[required]) > .form-label::after,
+    .form-group:has(select[required]) > .form-label::after,
+    .form-group:has(textarea[required]) > .form-label::after {
+        content: " *";
+        color: red;
+        font-weight: bold;
+    }
+
+    .input-readonly, .input-readonly:-webkit-autofill {
+        pointer-events: none;
+        background-color: #e9ecef !important;
+        background: #e9ecef !important;
+        -webkit-box-shadow: 0 0 0 50px #e9ecef inset;
+    }
 </style>
       
 <script>

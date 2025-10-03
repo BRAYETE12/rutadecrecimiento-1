@@ -1,5 +1,7 @@
 <section class="w-100 hidden" id="tipoRegistro" >
-    <h2 class="color-2 font-w-700 mt-4">Actualmente...</h2>
+    <h2 class="color-2 font-w-700 my-5">
+        Actualmente...
+    </h2>
 
     <h2 class="color-3 font-w-900 mb-3 mt-4">... soy una empresa o persona registrada en una cámara de comercio:</h2>
 
@@ -105,7 +107,7 @@
     </div>
 
     <div class="d-flex justify-content-center mt-4">
-        <a href="/" class="button button-secundary w-auto mx-1">Cancelar</a>
+        <a href="{{$loguin ? '/seleccionarEmpresa' : '/' }}" class="button button-secundary w-auto mx-1">Cancelar</a>
         <button id="tipoRegistroBtn" class="button button-primary w-auto" >Continuar</button>
     </div>
 </section>
@@ -117,7 +119,7 @@
            redireccionarTipoRegistro();
         });
 
-         $('input[name="tipoRegistroRUTAC"]').change(function() {
+        $('input[name="tipoRegistroRUTAC"]').change(function() {
             redireccionarTipoRegistro();
         });
 
@@ -126,19 +128,21 @@
             let tipoRegistroRUTAC = $('input[name="tipoRegistroRUTAC"]:checked').val();
 
             $("#tipoRegistro").slideUp();
-
             $("#banner_info_idea").hide();
 
-            $('#tipoPersonaID option').hide();
-            $('#tipoPersonaID option[value="0"]').show();
-            $('#tipoPersonaID option[value="0"]').attr("selected", "selected");
-            $("#tipoPersonaID").change();
-            $("#tipoPersonaID").attr('read-only', true);
+            $('#tipoPersonaID').val("0");
+            
+            $('#address').attr('required', true);
+            $('#registration_email').attr('required', true);
+            $('#mobile').attr('required', true);
+            $('#sector_id').attr('required', true);
+            $('#seccion').attr('required', true);
+            $('#ciiuactividad_id').attr('required', true);
 
-            $('#camara_comercio').attr('disabled', false);
-            $('#registration_number').attr('disabled', false);
-            $('#nit_registrado').attr('disabled', false);
-            $('#name_legal_representative').attr('disabled', false);
+            $('#datosSector').show();
+            $('#datosContacto').show();
+
+            toogleCamposFormal(false);
 
             switch (tipoRegistroRUTAC) 
             {
@@ -147,35 +151,77 @@
                 case "3": abrirFormularioMatriculaOTRACAM(); break;
                 case "4": abrirFormularioMatriculaCCSM(); break;
                 default: break;
-            }
-            
+            }  
         }
 
-        function abrirFormularioMatriculaCCSM() {
+        function abrirFormularioMatriculaCCSM() 
+        {
+            toogleCamposFormal(true);
+            $("#camara_comercio option[value='32']").show();
+
             $(".tituloSegunTipo").html("Empresa");
             $("#matriculaCCSM").slideDown();
         }
 
         function abrirFormularioMatriculaOTRACAM() 
         {
+            $('#campoTipoOrganizacion').hide();
+            $("#camara_comercio option[value='32']").hide();
+            $('#business_name').addClass('input-readonly');
+
             $(".tituloSegunTipo").html("Empresa");
             $("#matriculaFormal").slideDown();
         }
 
 
         function abrirFormularioInformal() 
-        {
+        {            
+            $('#campoTipoOrganizacion').hide();
+
+            $('#sector_id').attr('required', false);
+            $('#seccion').attr('required', false);
+            $('#ciiuactividad_id').attr('required', false);
+
             $(".tituloSegunTipo").html("Idea de Negocio");
             $("#infoUnidad").slideDown();
         }
 
         function abrirFormularioIdea() 
         {
+            $('#campoTipoOrganizacion').hide();
+            $('#datosContacto').hide();
+            $('#datosSector').hide();
+
+            $('#address').attr('required', false);
+            $('#registration_email').attr('required', false);
+            $('#mobile').attr('required', false);
+
+            $('#sector_id').attr('required', false);
+            $('#seccion').attr('required', false);
+            $('#ciiuactividad_id').attr('required', false);
+
             $("#banner_info_idea").show();
             $(".tituloSegunTipo").html("Idea de Negocio");
             $("#infoUnidad").slideDown();
         }
 
+        function toogleCamposFormal(sw)
+        {            
+            const ids = [
+                'camara_comercio', 'sector_id', 'seccion', 'ciiuactividad_id',
+                'department_id', 'municipality_id',
+                'business_name', 'registration_number', 'nit_registrado', 'name_legal_representative', 'razon_social',
+                'registration_date', 'address', 'registration_email'
+            ];
+
+            if(sw)
+            {
+                ids.forEach(e => { $('#'+e).addClass('input-readonly'); });     
+            }
+            else {
+                ids.forEach(e => { $('#'+e).removeClass('input-readonly'); });     
+            }
+        }
 
     });
 </script>

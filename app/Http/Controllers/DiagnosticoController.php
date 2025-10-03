@@ -20,10 +20,6 @@ class DiagnosticoController extends Controller
     {
         $unidadProductiva = UnidadProductivaService::getUnidadProductiva();
 
-        if (!($unidadProductiva->sector_id > 0)) {
-            return redirect()->route('company.complete_info');
-        }
-
         if ($request->anual_sales != null) {
             $unidadProductiva->anual_sales = $request->anual_sales;
             $unidadProductiva->save();

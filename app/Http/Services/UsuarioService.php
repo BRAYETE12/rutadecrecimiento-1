@@ -18,7 +18,7 @@ class UsuarioService
         $user->name = $request->user_name;
         $user->lastname = $request->user_lastname;
         $user->email = $request->user_email;
-        $user->como_se_entero = $request->como_se_entero;
+        //$user->como_se_entero = $request->como_se_entero;
         $user->password = bcrypt($request->user_password);
         $user->save();
 

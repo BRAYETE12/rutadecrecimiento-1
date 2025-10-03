@@ -6,7 +6,6 @@ use App\Models\CiiuActividad;
 use App\Models\Municipio;
 use App\Models\UnidadProductiva;
 use App\Models\UnidadProductivaPersona;
-use App\Models\User;
 
 class CrearUnidadService
 {
@@ -17,6 +16,7 @@ class CrearUnidadService
         
         $data = [
             'business_name' => $values->nombre,
+            'razon_social' => $values->nombre,
             'nit_registrado' => $values->nit,
             'registration_number' => $values->matricula,
             'registration_date' => date("Y-m-d", strtotime($values->fechamatricula)),
@@ -61,9 +61,6 @@ class CrearUnidadService
 
     public static function crear($request, $tipoPersona, $tipoRegistro): UnidadProductiva
     {
-        $tipoIdentificacion = SICAM32::codigoTIpoIdentificon($request->tipo_identificacion);
-        $user = User::find($request->user_id);
-
         $company = new UnidadProductiva();
 
         $company->fill([
@@ -88,11 +85,12 @@ class CrearUnidadService
             
             'geolocation' => UnidadProductivaService::localizacion($request->department_id, $request->municipality_id, $request->address),
             
-            'name_legal_representative' => $request->name_legal_representative ?? ($user->name .' '. $user->lastname),
+            'name_legal_representative' => $request->name_legal_representative ?? $request->contact_person,
             'affiliated' => 0,
             'user_id' => $request->user_id,
-            'tipo_identificacion' => $tipoIdentificacion,
-            'identificacion' => $request->identificacion ?? $user->identification,
+            
+            'tipo_identificacion' => $request->tipo_identificacion,
+            'identificacion' => $request->identificacion,
             
             'unidadtipo_id' => $tipoRegistro->unidadtipo_id,
             'tipo_registro_rutac' => $tipoRegistro->unidadtipo_nombre,
@@ -110,7 +108,6 @@ class CrearUnidadService
             'social_instagram' => $request->social_instagram,
             'social_facebook' => $request->social_facebook,
             'social_linkedin' => $request->social_linkedin,
-
         ]);
 
         if ($request->tipo_registro_rutac == 1) {
@@ -153,9 +150,11 @@ class CrearUnidadService
             'unidadProductivaTELEFONO' => $company->mobile,
             'municipioCODIGODANE' => $municipio->municipioCODIGODANE,
             'unidadProductivaDIRECCION' => $company->address,
-            'unidadProductivaCONTACTONOMBRE' => $company->name_legal_representative,
-            'unidadProductivaCONTACTOEMAIL' => $company->registration_email,
-            'unidadProductivaCONTACTOTELEFONO' => $company->mobile,
+
+            'unidadProductivaCONTACTONOMBRE' => $company->contact_person,
+            'unidadProductivaCONTACTOEMAIL' => $company->contact_email,
+            'unidadProductivaCONTACTOTELEFONO' => $company->contact_phone,
+
             'unidadProductivaCAMARADECOMERCIO' => $company->camara_comercio,
             'unidadProductivaMATRICULA' => $company->registration_number,
             'unidadProductivaFCHMATRICULA' => $company->registration_date->format('Y-m-d'),

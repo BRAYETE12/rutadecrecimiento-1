@@ -1,17 +1,34 @@
 <section class="w-100 hidden" id="contacto">
-    <h2 class="color-2 font-w-700">
+    <h2 class="color-2 font-w-700 my-5">
         Datos de la Persona de Contacto
     </h2>
 
-    <form class="row" id="contactoform" >
+    <form class="row mt-4" id="contactoform" >
+        
+        <div class="col-12 col-md-6 mb-3">
+            <label for="tipo_identificacion" class="form-label">Tipo de  identificación</label>
+            <select class="form-select" id="tipo_identificacion" name="tipo_identificacion" required>
+                <option value="">Seleccione una opción</option> 
+                @foreach($tiposIdentificacion as $item)
+                    @if ($item->tipoIdentificacionTIPOPERSONAID == 1 && $item->tipoIdentificacionID > 0)
+                        <option value="{{$item->tipoIdentificacionCODIGO}}">{{$item->tipoIdentificacionTITULO}}</option>                        
+                    @endif
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-12 col-md-6 form-group mb-3">
+            <label for="identificacion" class="form-label">N° de identificación</label>
+            <input type="text" class="form-control" id="identificacion" name="identificacion" placeholder="N° Identificación" required>
+        </div>
         
         <div class="col-12 col-md-12 form-group mb-3">
-            <label class="form-label">Nombre completo *</label>
+            <label class="form-label">Nombre completo </label>
             <input type="text" class="form-control" id="contact_person" name="contact_person" placeholder="Nombres" required />
         </div>
 
         <div class="col-12 col-md-6 mb-3">
-            <label class="form-label">Cargo *</label>
+            <label class="form-label">Cargo </label>
             <select class="form-select" id="contact_position" name="contact_position" required>
                 <option value="">Seleccione una opción</option> 
                 @foreach($listaCargos as $cargo)
@@ -21,7 +38,7 @@
         </div>
 
         <div class="col-12 col-md-6 form-group mb-3">
-            <label class="form-label">Sexo *</label>
+            <label class="form-label">Sexo </label>
             <select class="form-select" name="contact_sexo" id="contact_sexo" required>
                 <option value="">Seleccione una opción</option>
                 <option value="MASCULINO" >MASCULINO</option>
@@ -30,11 +47,11 @@
         </div>
 
         <div class="col-12 col-md-6 form-group mb-3">
-            <label class="form-label">E-mail *</label>
+            <label class="form-label">E-mail </label>
             <input type="email" class="form-control" id="contact_email"  name="contact_email" placeholder="E-mail" required />
         </div>
         <div class="col-12 col-md-6 form-group mb-3">
-            <label class="form-label">Teléfono *</label>
+            <label class="form-label">Teléfono </label>
             <input type="tel" class="form-control" id="contact_phone" name="contact_phone" placeholder="Teléfono" maxlength="15" required />
         </div>
 
@@ -87,14 +104,9 @@
             $("#tipoRegistroResumen").html(typeHTML);
 
 
-            let user_identification = $("#user_identification").val();
-            let user_name = $("#user_name").val();
-            let user_lastname = $("#user_lastname").val();
             let user_email = $("#user_email").val();
 
             $('#usuarioResumen').html(`
-                N° de identificación: <b>${user_identification}</b><br>
-                Nombres: <b>${user_name} ${user_lastname}</b><br>
                 Email <b>${user_email}</b>
             `);
 

@@ -29,6 +29,7 @@ Route::post('/registro/buscar', [RegistroController::class, 'search'])->name('re
 Route::post('/registro/buscar/detalles', [RegistroController::class, 'searchDetail'])->name('register.searchDetail');
 Route::post('/registro/crearUsuario', [RegistroController::class, 'crearUsuario'])->name('register.crearUsuario');
 Route::post('/registro/store', [RegistroController::class, 'store'])->name('register.save');
+Route::post('/registro/validarUsuario', [RegistroController::class, 'validarUsuario'])->name('register.validarUsuario');
 
 /* Rutas de empresa */
 Route::get('/ingreso', [LoginController::class, 'index'])->name('login');

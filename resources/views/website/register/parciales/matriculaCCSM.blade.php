@@ -1,7 +1,10 @@
 <section class="w-100 hidden" id="matriculaCCSM">
     <div id="matriculaCCSMBusqueda" >
         
-        <h2 class="color-2 font-w-700">Registra los datos de tu empresa</h2>
+        <h2 class="color-2 font-w-700 my-5">
+            Registra los datos de tu empresa
+        </h2>
+
         <p class="mt-10" >
             Seleccione el método por el cual desea validar su empresa y complete el resto de información
         </p>
@@ -35,7 +38,7 @@
 
     <div class="hidden" id="matriculaCCSMDetalle" >
 
-        <h1 class="size-l color-2 font-w-700">Se ha encontrado un registro de su búsqueda</h1>
+        <h1 class="size-l color-2 font-w-700">Se ha encontrado los siguientes registro de su búsqueda</h1>
         <p class="mt-5">
             A continuación se muestran los datos de la empresa que coinciden con los valores ingresados. <b>Por favor valide y confirme si es correcto.</b>
         </p>
@@ -82,12 +85,14 @@
 
                     response.listado.forEach(item => {
                         $('#busquedaResultado').append(`
-                            <label class="unidad shadow-sm p-3 my-2 d-block border rounded" style="cursor: pointer;">
-                                <input type="radio" name="unidadSeleccionada" value="${item.nit}" class="me-2" required />
-                                <span>
+                            <label class="unidad shadow-sm p-3 my-2 d-block border rounded position-relative" style="cursor: pointer;">
+                                <input type="radio" name="unidadSeleccionada" value="${item.nit}" style="position: absolute; right: 11px; transform: scale(2);" required />
+                                <p class="m-0 text-start" style="font-size: 1rem;">
                                     Razón social: <b>${item.nombre}</b><br>
-                                    NIT: <b class="nit" >${item.nit}</b>
-                                </span>
+                                    NIT: <b class="nit" >${item.nit}</b><br>
+                                    MATRICULA: <b class="nit" >${item.matricula}</b><br>
+                                    FECHA: <b class="nit" >${item.fechamatricula}</b>
+                                </p>
                             </label>
                         `);                    
                     });
@@ -138,11 +143,6 @@
                     initselect('/secciones/listado', response.datos.sector_id, '#seccion', response.datos.seccion);
                     initselect('/actividades/listado', response.datos.seccion, '#ciiuactividad_id', response.datos.ciiuactividad_id);
                     
-                    $('#camara_comercio').attr('disabled', true);
-                    $('#registration_number').attr('disabled', true);
-                    $('#nit_registrado').attr('disabled', true);
-                    $('#name_legal_representative').attr('disabled', true);
-
                     $("#matriculaCCSM").slideUp();
                     $("#matriculaFormal").slideDown();
                 },
