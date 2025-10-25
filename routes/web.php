@@ -3,6 +3,7 @@
 use App\Http\Controllers\DiagnosticoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\ProgramaController;
@@ -35,6 +36,12 @@ Route::post('/registro/validarUsuario', [RegistroController::class, 'validarUsua
 Route::get('/ingreso', [LoginController::class, 'index'])->name('login');
 Route::post('/ingreso/procesar', [LoginController::class, 'login'])->name('login.process');
 Route::get('/logout', [LoginController::class, 'logout'])->name('company.logout');
+
+/* Rutas de recuperación de contraseña */
+Route::get('/password/reset-request', [PasswordResetController::class, 'showRequestForm'])->name('password.request');
+Route::post('/password/send', [PasswordResetController::class, 'sendResetLink'])->name('password.send');
+Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])->name('password.show');
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
 
 Route::get('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic');
 Route::post('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic.saveVenta');

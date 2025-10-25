@@ -22,6 +22,10 @@ class UsuarioService
         $user->password = bcrypt($request->user_password);
         $user->save();
 
+        // Enviar correo de bienvenida
+        $nombreCompleto = $request->user_name . ' ' . $request->user_lastname;
+        \App\Http\Services\EmailService::enviarCorreoBienvenida($user->email, $nombreCompleto);
+
         return $user;
     }
 }

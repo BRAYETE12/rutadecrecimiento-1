@@ -118,6 +118,15 @@ class CrearUnidadService
 
         $company->save();
 
+        // Enviar correo de unidad productiva creada
+        if ($company->user_id) {
+            $user = \App\Models\User::find($company->user_id);
+            if ($user) {
+                $nombreUsuario = $user->name . ' ' . $user->lastname;
+                \App\Http\Services\EmailService::enviarCorreoUnidadProductiva($company->registration_email, $nombreUsuario, $company->business_name);
+            }
+        }
+
         return $company;
     }
 

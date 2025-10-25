@@ -151,6 +151,24 @@ class DiagnosticoController extends Controller
         $unidadProductiva->complete_diagnostic = 1;
         $unidadProductiva->save();
 
+        // Enviar correo de diagnóstico completado
+        if ($unidadProductiva->user_id) {
+            $user = \App\Models\User::find($unidadProductiva->user_id);
+            if ($user) {
+                $nombreUsuario = $user->name . ' ' . $user->lastname;
+                $etapa = \App\Models\Etapa::find($unidadProductiva->etapa_id);
+                $nombreEtapa = $etapa ? $etapa->name : 'Etapa no definida';
+                
+                \App\Http\Services\EmailService::enviarCorreoDiagnosticoCompletado(
+                    $unidadProductiva->registration_email, 
+                    $nombreUsuario, 
+                    $unidadProductiva->business_name, 
+                    $resultado_puntaje, 
+                    $nombreEtapa
+                );
+            }
+        }
+
         return redirect()->route('company.dashboard');
     }
 }
