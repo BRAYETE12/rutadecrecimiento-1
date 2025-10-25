@@ -7,7 +7,11 @@
     <div class="my-5 mt-5 d-flex flex-column" id="register">
         <div class="row mt-5 justify-content-center">
             <div class="col-12 my-2 text-center">
-                <h3>Seleccione una unidad productiva para continuar</h3>
+                @if($companies->where('etapa_intervencion', '!=', 'TRANSFORMADA')->isEmpty())
+                    <h3>Cree su primera unidad productiva</h3>
+                @else
+                    <h3>Seleccione una unidad productiva para continuar</h3>
+                @endif
                 <a href="/registro" class="button button-primary w-auto" style="float: left;">
                     Crear unidad productiva
                 </a>

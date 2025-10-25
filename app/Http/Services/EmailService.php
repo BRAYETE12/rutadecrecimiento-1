@@ -90,28 +90,9 @@ class EmailService
                 .camara-logo {
                     text-align: left;
                 }
-                .camara-logo .logo-icon {
-                    width: 40px;
-                    height: 40px;
-                    background: white;
-                    border-radius: 8px;
-                    display: inline-block;
-                    margin-right: 10px;
-                    vertical-align: middle;
-                }
-                .camara-logo .text {
-                    display: inline-block;
-                    vertical-align: middle;
-                }
-                .camara-logo .main-text {
-                    font-size: 18px;
-                    font-weight: bold;
-                    margin: 0;
-                }
-                .camara-logo .sub-text {
-                    font-size: 10px;
-                    margin: 0;
-                    opacity: 0.9;
+                .camara-logo img {
+                    height: 50px;
+                    max-width: 200px;
                 }
                 .rutac-logo {
                     font-size: 24px;
@@ -239,15 +220,9 @@ class EmailService
                     <div class='slogan'>Haz crecer tu negocio</div>
                     <div class='logos-container'>
                         <div class='camara-logo'>
-                            <div class='logo-icon'></div>
-                            <div class='text'>
-                                <p class='main-text'>CÁMARA</p>
-                                <p class='sub-text'>DE COMERCIO DE MEDELLÍN PARA ANTIOQUIA</p>
-                            </div>
+                            <img src='https://cdnsicam.net/img/rutac/rutac_blanco.png' alt='Cámara de Comercio de Santa Marta para el Magdalena - Ruta C' />
                         </div>
-                        <div class='rutac-logo'>
-                            ruta<span class='c-icon'></span>
-                        </div>
+                   
                     </div>
                     <h1 class='main-title'>{$titulo}</h1>
                 </div>
@@ -256,7 +231,7 @@ class EmailService
                 </div>
                 <div class='footer'>
                     <p><strong>Ruta C - Ruta de Crecimiento</strong></p>
-                    <p>Cámara de Comercio de Medellín para Antioquia</p>
+                    <p>Cámara de Comercio de Santa Marta para el Magdalena</p>
                     <p>© " . date('Y') . " Todos los derechos reservados.</p>
                 </div>
             </div>
