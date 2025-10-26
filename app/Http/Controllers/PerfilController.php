@@ -28,12 +28,15 @@ class PerfilController extends Controller
             return redirect()->route('company.dashboard');    
         }
 
-        $user = Auth::user()->id;
+        $user = Auth::user();
+        $userId = $user->id;
 
         $data = [
             'footer'=> CommonService::footer(),
             'links'=> CommonService::links(),
-            'companies'=> UnidadProductiva::where('user_id', $user)->orderBy('fecha_creacion', 'desc')->get(),
+            'companies'=> UnidadProductiva::where('user_id', $userId)->orderBy('fecha_creacion', 'desc')->get(),
+            'user'=> $user,
+            'show_complete_registration_modal' => $user->como_se_entero === null,
         ];
      
 

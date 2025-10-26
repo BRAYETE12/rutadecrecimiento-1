@@ -79,6 +79,7 @@
                         <option value="llamada_telefonica">Llamada Telefónica</option>
                         <option value="redes_sociales">Redes Sociales</option>
                         <option value="evento">Evento</option>
+                        <option value="asesor">Asesor</option>
                         <option value="otro">Otro</option>
                     </select>
                 </div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DiagnosticoController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordResetController;
@@ -42,6 +43,13 @@ Route::get('/password/reset-request', [PasswordResetController::class, 'showRequ
 Route::post('/password/send', [PasswordResetController::class, 'sendResetLink'])->name('password.send');
 Route::get('/password/reset', [PasswordResetController::class, 'showResetForm'])->name('password.show');
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword'])->name('password.reset');
+
+/* Rutas de Google OAuth */
+Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+Route::get('/google/complete-registration', [GoogleAuthController::class, 'showCompleteRegistration'])->name('google.complete-registration');
+Route::post('/google/complete-registration', [GoogleAuthController::class, 'completeRegistration'])->name('google.complete-registration.save');
+Route::post('/google/complete-registration-modal', [GoogleAuthController::class, 'completeRegistrationFromModal'])->name('google.complete-registration.modal');
 
 Route::get('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic');
 Route::post('/empresa/diagnostico', [DiagnosticoController::class, 'index'])->name('company.diagnostic.saveVenta');

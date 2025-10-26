@@ -107,6 +107,92 @@
         @endif
     </div>
 </div>
+
+<!-- Modal para completar registro -->
+@if($show_complete_registration_modal)
+<div class="modal fade" id="completeRegistrationModal" tabindex="-1" aria-labelledby="completeRegistrationModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="completeRegistrationModalLabel">Completar Registro</h5>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Para continuar, necesitamos saber cómo te enteraste de Ruta C:</p>
+                <form id="completeRegistrationForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="como_se_entero" class="form-label">¿Cómo te enteraste de Ruta C?</label>
+                        <select class="form-select" id="como_se_entero" name="como_se_entero" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="correo_electronico">Correo Electrónico</option>
+                            <option value="mensaje_texto">Mensaje de Texto</option>
+                            <option value="llamada_telefonica">Llamada Telefónica</option>
+                            <option value="redes_sociales">Redes Sociales</option>
+                            <option value="evento">Evento</option>
+                            <option value="asesor">Asesor</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <div class="text-danger" id="como_se_entero-error" style="text-align: left; margin-top: 5px;"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitRegistrationBtn">Completar Registro</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Mostrar el modal automáticamente
+    $('#completeRegistrationModal').modal('show');
+    
+    $('#submitRegistrationBtn').on('click', function() {
+        const comoSeEntero = $('#como_se_entero').val();
+        const comoSeEnteroError = $('#como_se_entero-error');
+        
+        // Limpiar mensajes anteriores
+        comoSeEnteroError.text('');
+        
+        // Validaciones
+        if (!comoSeEntero) {
+            comoSeEnteroError.text('Por favor selecciona cómo te enteraste de Ruta C.');
+            return;
+        }
+        
+        // Deshabilitar botón y mostrar loading
+        const submitBtn = $('#submitRegistrationBtn');
+        submitBtn.prop('disabled', true);
+        submitBtn.text('Completando...');
+        
+        $.ajax({
+            url: '{{ route("google.complete-registration.modal") }}',
+            method: 'POST',
+            data: $('#completeRegistrationForm').serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#completeRegistrationModal').modal('hide');
+                    // Recargar la página para actualizar el estado
+                    location.reload();
+                } else {
+                    comoSeEnteroError.text(response.message || 'Error al completar el registro.');
+                }
+            },
+            error: function(xhr) {
+                const response = xhr.responseJSON;
+                comoSeEnteroError.text(response && response.message ? response.message : 'Error al completar el registro. Por favor intenta nuevamente.');
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false);
+                submitBtn.text('Completar Registro');
+            }
+        });
+    });
+});
+</script>
+@endif
 @endsection
 
 <style>
