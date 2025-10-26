@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Log;
 class EmailService
 {
     private const API_URL = 'https://adm.rutadecrecimiento.com/api/email/html';
-    private const API_KEY = 'sk_1f7b1d3c9e24f4f8b0d7a6c2a9b835d2';
+    private static function getApiKey(): string
+    {
+        return config('services.email.api_key');
+    }
 
     /**
      * Envía un correo HTML personalizado usando la API
@@ -18,7 +21,7 @@ class EmailService
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'X-API-Key' => self::API_KEY,
+                'X-API-Key' => self::getApiKey(),
             ])->post(self::API_URL, $data);
 
             if ($response->successful()) {

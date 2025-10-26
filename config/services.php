@@ -36,4 +36,8 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'email' => [
+        'api_key' => env('EMAIL_API_KEY'),
+    ],
+
 ];

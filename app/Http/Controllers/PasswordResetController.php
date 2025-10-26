@@ -12,7 +12,11 @@ use Illuminate\Support\Str;
 class PasswordResetController extends Controller
 {
     private $apiUrl = 'https://adm.rutadecrecimiento.com/api/email/password-reset';
-    private $apiKey = 'sk_1f7b1d3c9e24f4f8b0d7a6c2a9b835d2';
+    
+    private function getApiKey(): string
+    {
+        return config('services.email.api_key');
+    }
 
     public function showRequestForm()
     {
@@ -60,7 +64,7 @@ class PasswordResetController extends Controller
             // Llamar a la API
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'X-API-Key' => $this->apiKey
+                'X-API-Key' => $this->getApiKey()
             ])->post($this->apiUrl, $data);
 
             if ($response->successful()) {
